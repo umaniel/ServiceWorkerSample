@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.d1375aeeded4c5e9f56203cc57319a1f.js"
+  "/ServiceWorkerSample/precache-manifest.0d473f6b2395cbe6281f24da10f50180.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "pwatest"});
@@ -24,7 +24,6 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
-
 self.addEventListener("push", function(event) {
   event.waitUntil(
     self.registration.pushManager.getSubscription()
