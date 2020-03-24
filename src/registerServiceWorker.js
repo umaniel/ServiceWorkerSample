@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === "production") {
           userVisibleOnly: true,
           applicationServerKey: decodeBase64URL(key)
         });
-        console.log(a.endpoint)
+        console.dir(a)
         return a
       });
     },
