@@ -22,6 +22,7 @@ if (process.env.NODE_ENV === 'production') {
         'For more details, visit https://goo.gl/AFskqB'
       )
       return registration.pushManager.getSubscription().then(function(subscription) {
+                console.log("pushManager endpoint:", subscription.endpoint) 
         if (subscription) {
           return subscription;
         }
@@ -29,6 +30,7 @@ if (process.env.NODE_ENV === 'production') {
           userVisibleOnly: true,
           applicationServerKey: decodeBase64URL(key)
         })
+
       })
     },
     registered () {
