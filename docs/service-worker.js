@@ -13,34 +13,51 @@
 
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
-importScripts(
-  "/ServiceWorkerSample/precache-manifest.abd156b5e0845e989df09649b94ac684.js"
-);
+importScripts("/ServiceWorkerSample/precache-manifest.abd156b5e0845e989df09649b94ac684.js");
 
-workbox.core.setCacheNameDetails({prefix: "pwatest"});
+workbox.core.setCacheNameDetails({ prefix: "pwatest" });
+window.addEventListener('load', function() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+    navigator.serviceWorker.ready.then(function(registration) {
+        return registration.pushManager.getSubscription().then(function(subscription) {
+          if (subscription) {
+            return subscription;
+          }
+          return registration.pushManager.subscribe({
+            userVisibleOnly: true
+          })
+        })
+    }).then(function(subscription) {
+        console.log("pushManager endpoint:", subscription.endpoint) 
+    }).catch(function(error) {
+        console.warn("serviceWorker error:", error)
+    })
+  }
+});
 
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+self.addEventListener("message", event => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
 });
 self.addEventListener("push", function(event) {
   event.waitUntil(
-    self.registration.pushManager.getSubscription()
+    self.registration.pushManager
+      .getSubscription()
       .then(function(subscription) {
         if (subscription) {
-          return subscription.endpoint
+          return subscription.endpoint;
         }
-        throw new Error('User not subscribed')
-    })
-    .then(function(res) {
-
-      return self.registration.showNotification('title', {
-        body: 'contents'
+        throw new Error("User not subscribed");
       })
-    })
-  )
-})
+      .then(function(res) {
+        return self.registration.showNotification("title", {
+          body: "contents"
+        });
+      })
+  );
+});
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
  * requests for URLs in the manifest.
