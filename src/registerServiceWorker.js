@@ -21,10 +21,12 @@ if (process.env.NODE_ENV === "production") {
         if (subscription) {
           return subscription;
         }
-        return registration.pushManager.subscribe({
+        const a = registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: decodeBase64URL(key)
         });
+        console.log(a)
+        return a
       });
     },
     registered() {
