@@ -17,6 +17,7 @@ if (process.env.NODE_ENV === "production") {
     ready(registration) {
       console.log("App is being served from cache by a service worker.\n");
       return registration.pushManager.getSubscription().then(function(subscription) {
+        console.log(subscription)
         if (subscription) {
           return subscription;
         }
@@ -45,10 +46,5 @@ if (process.env.NODE_ENV === "production") {
       console.error("Error during service worker registration:", error);
     }
   })
-    .then(function(subscription) {
-      console.log("pushManager endpoint:", subscription.endpoint);
-    })
-    .catch(function(error) {
-      console.warn("serviceWorker error:", error);
-    });
+
 }
