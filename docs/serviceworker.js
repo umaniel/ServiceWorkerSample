@@ -1,27 +1,9 @@
-let baseURL = '/';
-
-self.addEventListener('push', event => {
-    let json = event.data.json();
-
-    baseURL = json.data.url;
-
-    event.waitUntil(
-        self.registration.showNotification(json.notification.title, {
-            'body': json.notification.body,
-            'tag': 'request',
-            'actions': JSON.parse(json.data.action)
-        })
-    );
-});
-
-self.addEventListener('notificationclick', event => {
-    if (event.action === 'select-a') {
-        self.clients.openWindow('https://www.mitsue.co.jp/knowledge/blog/');
-    } else if (event.action === 'select-b') {
-        self.clients.openWindow('https://www.mitsue.co.jp/knowledge/blog/frontend/');
-    } else {
-        self.clients.openWindow(baseURL);
-    }
-
-    event.notification.close();
-});
+self.addEventListener("push", function(event) {
+  event.waitUntil(
+    self.registration.showNotification("デスクトップ通知", {
+      icon: "/images/directory.png",
+      body: "新しいお知らせが届いています。", //このメッセージが出るだけになってしまうので、サーバ側でメッセージをどうにかできるか要調査
+      tag: "push-test"
+    })
+  )
+})

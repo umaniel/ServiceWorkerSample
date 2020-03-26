@@ -1,40 +1,49 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="manifest" href="manifest.json" />
-    <title>Push Notification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="manifest.json">
+    <title>Document</title>
   </head>
-  <body>
-    <script src="https://www.gstatic.com/firebasejs/7.12.0/firebase-app.js"></script>
-    <script>
-      var firebaseConfig = {
-        apiKey: "AIzaSyCuv2P0iPvKs2ivv4PKUvkopnUHg_Wf310",
-        authDomain: "serviceworkertest-d7752.firebaseapp.com",
-        databaseURL: "https://serviceworkertest-d7752.firebaseio.com",
-        projectId: "serviceworkertest-d7752",
-        storageBucket: "serviceworkertest-d7752.appspot.com",
-        messagingSenderId: "989866165948",
-        appId: "1:989866165948:web:8db0878eb85a78cbddb2b9"
-      };
-      var messaging = firebase.initializeApp(firebaseConfig).messaging();
-      var serviceWorker = navigator.serviceWorker;
+  <body></body>
+  <script>
 
-      messaging.requestPermission();
 
-      serviceWorker
-        .register("serviceworker.js")
-        .then(() => {
-          return serviceWorker.ready;
+const decodeBase64URL = data => {
+  if (typeof data !== "string") return null;
+  let decoded = atob(data.replace(/\-/g, "+").replace(/_/g, "/"));
+  let buffer = new Uint8Array(decoded.length);
+  for (let i = 0; i < data.length; i++) buffer[i] = decoded.charCodeAt(i);
+  return buffer;
+};
+
+const key = "BK59rlKj64FC_fcHIqeVWxE2YlSN_OPaNSuEdUbmooNT5lvONjd3HOdEGQoLghGPOpliS8kh2v-PWJZJrhFbN5s";
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./serviceworker.js");
+
+      navigator.serviceWorker.ready
+        .then(function(registration) {
+          console.log(registration)
+          return registration.pushManager.subscribe({ 
+            userVisibleOnly: true,
+            applicationServerKey: decodeBase64URL(key)
+           });
         })
-        .then(regist => {
-          messaging.useServiceWorker(regist);
-          messaging.requestPermission().then(() => {
-            messaging.getToken().then(token => {
-              console.log(token);
-            });
-          });
-        });
-    </script>
-  </body>
+        .then(function(subscription) {
+          console.log(subscription)
+          console.log("GCM EndPoint is:" + subscription.endpoint);
+          var auth = subscription.getKey("auth")
+            ? btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey("auth"))))
+            : "";
+          console.log("User Auth is:" + auth);
+          var publicKey = subscription.getKey("p256dh")
+            ? btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey("p256dh"))))
+            : "";
+          console.log("User PublicKey is:" + publicKey);
+        })
+        .catch(console.error.bind(console));
+    }
+  </script>
 </html>
